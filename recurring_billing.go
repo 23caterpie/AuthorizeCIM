@@ -94,6 +94,7 @@ type Subscription struct {
 type BillTo struct {
 	FirstName   string `json:"firstName,omitempty"`
 	LastName    string `json:"lastName,omitempty"`
+	Company     string `json:"company,omitempty"`
 	Address     string `json:"address,omitempty"`
 	City        string `json:"city,omitempty"`
 	State       string `json:"state,omitempty"`
@@ -141,6 +142,9 @@ func SendSubscription(sub Subscription) (*SubscriptionResponse, error) {
 		return nil, err
 	}
 	response, err := SendRequest(jsoned)
+	if err != nil {
+		return nil, err
+	}
 	var dat SubscriptionResponse
 	err = json.Unmarshal(response, &dat)
 	if err != nil {
@@ -166,6 +170,9 @@ func UpdateSubscription(sub Subscription) (*SubscriptionResponse, error) {
 		return nil, err
 	}
 	response, err := SendRequest(jsoned)
+	if err != nil {
+		return nil, err
+	}
 	var dat SubscriptionResponse
 	err = json.Unmarshal(response, &dat)
 	if err != nil {
@@ -190,6 +197,9 @@ func (sub SetSubscription) Info() (*GetSubscriptionResponse, error) {
 		return nil, err
 	}
 	response, err := SendRequest(jsoned)
+	if err != nil {
+		return nil, err
+	}
 	var dat GetSubscriptionResponse
 	err = json.Unmarshal(response, &dat)
 	if err != nil {
@@ -217,6 +227,9 @@ func (sub SetSubscription) Status() (*SubscriptionStatus, error) {
 		return nil, err
 	}
 	response, err := SendRequest(jsoned)
+	if err != nil {
+		return nil, err
+	}
 	var dat SubscriptionStatus
 	err = json.Unmarshal(response, &dat)
 	if err != nil {
@@ -237,6 +250,9 @@ func (sub SetSubscription) Cancel() (*SubscriptionCancel, error) {
 		return nil, err
 	}
 	response, err := SendRequest(jsoned)
+	if err != nil {
+		return nil, err
+	}
 	var dat SubscriptionCancel
 	err = json.Unmarshal(response, &dat)
 	if err != nil {
@@ -265,6 +281,9 @@ func SubscriptionList(search string) (*GetSubscriptionList, error) {
 		return nil, err
 	}
 	response, err := SendRequest(jsoned)
+	if err != nil {
+		return nil, err
+	}
 	var dat GetSubscriptionList
 	err = json.Unmarshal(response, &dat)
 	if err != nil {

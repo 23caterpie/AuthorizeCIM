@@ -2,7 +2,6 @@ package AuthorizeCIM
 
 import (
 	"bytes"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 )
@@ -13,10 +12,16 @@ var apiKey *string
 var testMode string
 var showLogs bool = true
 var connected bool = false
+var apiLogger Logger
 
-func SetAPIInfo(name string, key string, mode string) {
+type Logger interface {
+	Println(...interface{})
+}
+
+func SetAPIInfo(name string, key string, mode string, logger Logger) {
 	apiKey = &key
 	apiName = &name
+	apiLogger = logger
 	if mode == "live" {
 		showLogs = false
 		testMode = "liveMode"
@@ -58,8 +63,10 @@ func SendRequest(input []byte) ([]byte, error) {
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	body = bytes.TrimPrefix(body, []byte("\xef\xbb\xbf"))
-	if showLogs {
-		fmt.Println(string(body))
+	if apiLogger != nil {
+		apiLogger.Println("Endpoint", api_endpoint)
+		apiLogger.Println("Request", string(input))
+		apiLogger.Println("Response", string(body))
 	}
 	return body, err
 }

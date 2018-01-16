@@ -25,6 +25,9 @@ func GetPaymentProfileIds(month string, method string) (*GetCustomerPaymentProfi
 		return nil, err
 	}
 	response, err := SendRequest(jsoned)
+	if err != nil {
+		return nil, err
+	}
 	var dat GetCustomerPaymentProfileListResponse
 	err = json.Unmarshal(response, &dat)
 	if err != nil {
@@ -111,6 +114,9 @@ func GetProfileIds() ([]string, error) {
 		return []string{}, err
 	}
 	response, err := SendRequest(jsoned)
+	if err != nil {
+		return []string{}, err
+	}
 	var dat CustomerProfileIdsResponse
 	err = json.Unmarshal(response, &dat)
 	if err != nil {
@@ -133,6 +139,9 @@ func ValidatePaymentProfile(customer Customer) (*ValidateCustomerPaymentProfileR
 		return nil, err
 	}
 	response, err := SendRequest(jsoned)
+	if err != nil {
+		return nil, err
+	}
 	var dat ValidateCustomerPaymentProfileResponse
 	err = json.Unmarshal(response, &dat)
 	if err != nil {
@@ -153,6 +162,9 @@ func GetProfile(customer Customer) (*GetCustomerProfileResponse, error) {
 		return nil, err
 	}
 	response, err := SendRequest(jsoned)
+	if err != nil {
+		return nil, err
+	}
 	var dat GetCustomerProfileResponse
 	err = json.Unmarshal(response, &dat)
 	if err != nil {
@@ -175,6 +187,9 @@ func CreateProfile(profile Profile) (*CustomProfileResponse, error) {
 	}
 
 	response, err := SendRequest(jsoned)
+	if err != nil {
+		return nil, err
+	}
 	var dat CustomProfileResponse
 	err = json.Unmarshal(response, &dat)
 	if err != nil {
@@ -196,6 +211,9 @@ func CreateShipping(profile Profile) (*CreateCustomerShippingAddressResponse, er
 		return nil, err
 	}
 	response, err := SendRequest(jsoned)
+	if err != nil {
+		return nil, err
+	}
 	var dat CreateCustomerShippingAddressResponse
 	err = json.Unmarshal(response, &dat)
 	if err != nil {
@@ -221,8 +239,8 @@ func UpdatePaymentProfile(profile Profile) (*MessagesResponse, error) {
 			CustomerProfileID:      profile.CustomerProfileId,
 			MerchantAuthentication: GetAuthentication(),
 			UpPaymentProfile: UpPaymentProfile{
-				BillTo:                   profile.PaymentProfiles.BillTo,
-				Payment:                  profile.PaymentProfiles.Payment,
+				BillTo:                   profile.PaymentProfile.BillTo,
+				Payment:                  profile.PaymentProfile.Payment,
 				CustomerPaymentProfileID: profile.PaymentProfileId,
 			},
 			ValidationMode: testMode,
@@ -271,6 +289,9 @@ func MessageResponder(d interface{}) (*MessagesResponse, error) {
 		return nil, err
 	}
 	response, err := SendRequest(jsoned)
+	if err != nil {
+		return nil, err
+	}
 	var dat MessagesResponse
 	err = json.Unmarshal(response, &dat)
 	if err != nil {
@@ -320,6 +341,9 @@ func CreatePaymentProfile(profile CustomerPaymentProfile) (*CustomerPaymentProfi
 		return nil, err
 	}
 	response, err := SendRequest(jsoned)
+	if err != nil {
+		return nil, err
+	}
 	var dat CustomerPaymentProfileResponse
 	err = json.Unmarshal(response, &dat)
 	if err != nil {
@@ -345,21 +369,21 @@ type CustomerProfiler struct {
 }
 
 type Profile struct {
-	MerchantCustomerID string           `json:"merchantCustomerId,omitempty"`
-	Description        string           `json:"description,omitempty"`
-	Email              string           `json:"email,omitempty"`
-	CustomerProfileId  string           `json:"customerProfileId,omitempty"`
-	PaymentProfiles    *PaymentProfiles `json:"paymentProfiles,omitempty"`
-	PaymentProfileId   string           `json:"customerPaymentProfileId,omitempty"`
-	Shipping           *Address         `json:"address,omitempty"`
-	CustomerAddressId  string           `json:"customerAddressId,omitempty"`
-	PaymentProfile     *PaymentProfile  `json:"paymentProfile,omitempty"`
+	MerchantCustomerID string            `json:"merchantCustomerId,omitempty"`
+	Description        string            `json:"description,omitempty"`
+	Email              string            `json:"email,omitempty"`
+	CustomerProfileId  string            `json:"customerProfileId,omitempty"`
+	PaymentProfiles    []PaymentProfiles `json:"paymentProfiles,omitempty"`
+	PaymentProfileId   string            `json:"customerPaymentProfileId,omitempty"`
+	Shipping           *Address          `json:"address,omitempty"`
+	CustomerAddressId  string            `json:"customerAddressId,omitempty"`
+	PaymentProfile     *PaymentProfile   `json:"paymentProfile,omitempty"`
 }
 
 type PaymentProfiles struct {
 	CustomerType string  `json:"customerType,omitempty"`
-	Payment      Payment `json:"payment,omitempty"`
 	BillTo       *BillTo `json:"billTo,omitempty"`
+	Payment      Payment `json:"payment,omitempty"`
 	PaymentId    string  `json:"paymentProfileId,omitempty"`
 }
 
@@ -590,9 +614,9 @@ type UpdateCustomerPaymentProfile struct {
 }
 
 type UpPaymentProfile struct {
-	BillTo                   *BillTo `json:"billTo"`
-	Payment                  Payment `json:"payment"`
-	CustomerPaymentProfileID string  `json:"customerPaymentProfileId"`
+	BillTo                   *BillTo  `json:"billTo"`
+	Payment                  *Payment `json:"payment"`
+	CustomerPaymentProfileID string   `json:"customerPaymentProfileId"`
 }
 
 type UpdateCustomerShippingAddressRequest struct {

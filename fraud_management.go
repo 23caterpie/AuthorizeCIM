@@ -88,6 +88,9 @@ func SendTransactionUpdate(tranx PreviousTransaction, method string) (*Transacti
 		return nil, err
 	}
 	response, err := SendRequest(jsoned)
+	if err != nil {
+		return nil, err
+	}
 	var dat TransactionResponse
 	err = json.Unmarshal(response, &dat)
 	if err != nil {
@@ -118,6 +121,9 @@ func SendGetUnsettled() (*TransactionsList, error) {
 		return nil, err
 	}
 	response, err := SendRequest(jsoned)
+	if err != nil {
+		return nil, err
+	}
 	var dat TransactionsList
 	err = json.Unmarshal(response, &dat)
 	if err != nil {

@@ -31,6 +31,9 @@ func (r Range) SettledBatch() (*BatchListResponse, error) {
 		return nil, err
 	}
 	response, err := SendRequest(jsoned)
+	if err != nil {
+		return nil, err
+	}
 	var dat BatchListResponse
 	json.Unmarshal(response, &dat)
 	return &dat, err
@@ -47,6 +50,9 @@ func UnSettledBatch() (*UnsettledTransactionListResponse, error) {
 		return nil, err
 	}
 	response, err := SendRequest(jsoned)
+	if err != nil {
+		return nil, err
+	}
 	var dat UnsettledTransactionListResponse
 	err = json.Unmarshal(response, &dat)
 	return &dat, err
@@ -76,6 +82,9 @@ func (r Range) Transactions() (*GetTransactionListResponse, error) {
 		return nil, err
 	}
 	response, err := SendRequest(jsoned)
+	if err != nil {
+		return nil, err
+	}
 	var dat GetTransactionListResponse
 	json.Unmarshal(response, &dat)
 	return &dat, err
@@ -93,6 +102,9 @@ func (r Range) Statistics() (*Statistics, error) {
 		return nil, err
 	}
 	response, err := SendRequest(jsoned)
+	if err != nil {
+		return nil, err
+	}
 	var dat BatchStatisticsResponse
 	err = json.Unmarshal(response, &dat)
 	return &dat.Batch.Statistics[0], err
@@ -109,6 +121,9 @@ func GetMerchantDetails() (*MerchantDetailsResponse, error) {
 		return nil, err
 	}
 	response, err := SendRequest(jsoned)
+	if err != nil {
+		return nil, err
+	}
 	var dat MerchantDetailsResponse
 	err = json.Unmarshal(response, &dat)
 	return &dat, err
@@ -126,6 +141,9 @@ func (tranx PreviousTransaction) Info() (*FullTransaction, error) {
 		return nil, err
 	}
 	response, err := SendRequest(jsoned)
+	if err != nil {
+		return nil, err
+	}
 	var dat TransactionDetailsResponse
 	err = json.Unmarshal(response, &dat)
 	return &dat.Transaction, err
