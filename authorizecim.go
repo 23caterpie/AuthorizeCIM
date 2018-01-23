@@ -2,7 +2,9 @@ package AuthorizeCIM
 
 import (
 	"bytes"
+	"errors"
 	"io/ioutil"
+	"log"
 	"net/http"
 )
 
@@ -10,24 +12,21 @@ var api_endpoint string = "https://apitest.authorize.net/xml/v1/request.api"
 var apiName *string
 var apiKey *string
 var testMode string
-var showLogs bool = true
+var showDebug bool = true
 var connected bool = false
-var apiLogger Logger
+var apiLogger *log.Logger
+var apihttpClient *http.Client
 
-type Logger interface {
-	Println(...interface{})
-}
-
-func SetAPIInfo(name string, key string, mode string, logger Logger) {
+func SetAPIInfo(name string, key string, mode string, showDebugLogs bool, logger *log.Logger, httpClient *http.Client) {
 	apiKey = &key
 	apiName = &name
 	apiLogger = logger
+	apihttpClient = httpClient
+	showDebug = showDebugLogs
 	if mode == "live" {
-		showLogs = false
 		testMode = "liveMode"
 		api_endpoint = "https://api.authorize.net/xml/v1/request.api"
 	} else {
-		showLogs = true
 		testMode = "testMode"
 		api_endpoint = "https://apitest.authorize.net/xml/v1/request.api"
 	}
@@ -53,22 +52,48 @@ func GetAuthentication() MerchantAuthentication {
 }
 
 func SendRequest(input []byte) ([]byte, error) {
+	if apihttpClient == nil {
+		return nil, errors.New("http client must be set")
+	}
 	req, err := http.NewRequest("POST", api_endpoint, bytes.NewBuffer(input))
 	req.Header.Set("Content-Type", "application/json")
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := apihttpClient.Do(req)
 	if err != nil {
+		logf("Endpoint: %s", api_endpoint)
+		logf("Request: %s", input)
 		return nil, err
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
-	body = bytes.TrimPrefix(body, []byte("\xef\xbb\xbf"))
-	if apiLogger != nil {
-		apiLogger.Println("Endpoint", api_endpoint)
-		apiLogger.Println("Request", string(input))
-		apiLogger.Println("Response", string(body))
+	if err != nil {
+		logf("Endpoint: %s", api_endpoint)
+		logf("Request: %s", input)
+		return nil, err
 	}
+	body = bytes.TrimPrefix(body, []byte("\xef\xbb\xbf"))
+	debugLogf("Endpoint: %s", api_endpoint)
+	debugLogf("Request Body: %s", input)
+	debugLogf("Response Body: %s", body)
 	return body, err
+}
+
+func logf(format string, args ...interface{}) {
+	if apiLogger != nil {
+		apiLogger.Printf(format, args...)
+	} else {
+		log.Printf(format, args...)
+	}
+}
+
+func debugLogf(format string, args ...interface{}) {
+	if !showDebug {
+		return
+	}
+	if apiLogger != nil {
+		apiLogger.Printf(format, args...)
+	} else {
+		log.Printf(format, args...)
+	}
 }
 
 func (r AVS) Text() string {
