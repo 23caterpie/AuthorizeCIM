@@ -48,6 +48,22 @@ func (tranx NewTransaction) AuthOnly() (*TransactionResponse, error) {
 	return response, err
 }
 
+func (tranx NewTransaction) AuthOnlyProfile(profile Customer) (*TransactionResponse, error) {
+	var new TransactionRequest
+	new = TransactionRequest{
+		TransactionType: "authOnlyTransaction",
+		Amount:          tranx.Amount,
+		Profile: &Profile{
+			CustomerProfileId: profile.ID,
+			PaymentProfile: &PaymentProfile{
+				PaymentProfileId: profile.PaymentID,
+			},
+		},
+	}
+	response, err := SendTransactionRequest(new)
+	return response, err
+}
+
 func (tranx NewTransaction) Refund() (*TransactionResponse, error) {
 	var new TransactionRequest
 	new = TransactionRequest{
