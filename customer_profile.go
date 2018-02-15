@@ -241,7 +241,7 @@ func UpdatePaymentProfile(profile Profile) (*MessagesResponse, error) {
 			UpPaymentProfile: UpPaymentProfile{
 				BillTo:                   profile.PaymentProfile.BillTo,
 				Payment:                  profile.PaymentProfile.Payment,
-				CustomerPaymentProfileID: profile.PaymentProfileId,
+				CustomerPaymentProfileID: profile.PaymentProfile.PaymentProfileId,
 			},
 			ValidationMode: testMode,
 		},
@@ -374,7 +374,6 @@ type Profile struct {
 	Email              string            `json:"email,omitempty"`
 	CustomerProfileId  string            `json:"customerProfileId,omitempty"`
 	PaymentProfiles    []PaymentProfiles `json:"paymentProfiles,omitempty"`
-	PaymentProfileId   string            `json:"customerPaymentProfileId,omitempty"`
 	Shipping           *Address          `json:"address,omitempty"`
 	CustomerAddressId  string            `json:"customerAddressId,omitempty"`
 	PaymentProfile     *PaymentProfile   `json:"paymentProfile,omitempty"`
@@ -384,7 +383,7 @@ type PaymentProfiles struct {
 	CustomerType string  `json:"customerType,omitempty"`
 	BillTo       *BillTo `json:"billTo,omitempty"`
 	Payment      Payment `json:"payment,omitempty"`
-	PaymentId    string  `json:"paymentProfileId,omitempty"`
+	PaymentId    string  `json:"customerPaymentProfileId,omitempty"`
 }
 
 type CustomProfileResponse struct {
@@ -539,7 +538,7 @@ type PaymentProfile struct {
 	BillTo                *BillTo  `json:"billTo,omitempty"`
 	Payment               *Payment `json:"payment,omitempty"`
 	DefaultPaymentProfile string   `json:"defaultPaymentProfile,omitempty"`
-	PaymentProfileId      string   `json:"paymentProfileId,omitempty"`
+	PaymentProfileId      string   `json:"customerPaymentProfileId,omitempty"`
 }
 
 type CustomerPaymentProfileResponse struct {
