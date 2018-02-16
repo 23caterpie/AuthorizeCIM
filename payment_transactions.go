@@ -12,6 +12,7 @@ func (tranx NewTransaction) Charge() (*TransactionResponse, error) {
 		Payment: &Payment{
 			CreditCard: tranx.CreditCard,
 		},
+		Order:    tranx.Order,
 		BillTo:   tranx.BillTo,
 		AuthCode: tranx.AuthCode,
 	}
@@ -24,6 +25,7 @@ func (tranx NewTransaction) ChargeProfile(profile Customer) (*TransactionRespons
 	new = TransactionRequest{
 		TransactionType: "authCaptureTransaction",
 		Amount:          tranx.Amount,
+		Order:           tranx.Order,
 		Profile: &Profile{
 			CustomerProfileId: profile.ID,
 			PaymentProfile: &PaymentProfile{
@@ -40,6 +42,7 @@ func (tranx NewTransaction) AuthOnly() (*TransactionResponse, error) {
 	new = TransactionRequest{
 		TransactionType: "authOnlyTransaction",
 		Amount:          tranx.Amount,
+		Order:           tranx.Order,
 		Payment: &Payment{
 			CreditCard: tranx.CreditCard,
 		},
@@ -53,6 +56,7 @@ func (tranx NewTransaction) AuthOnlyProfile(profile Customer) (*TransactionRespo
 	new = TransactionRequest{
 		TransactionType: "authOnlyTransaction",
 		Amount:          tranx.Amount,
+		Order:           tranx.Order,
 		Profile: &Profile{
 			CustomerProfileId: profile.ID,
 			PaymentProfile: &PaymentProfile{
@@ -69,6 +73,7 @@ func (tranx NewTransaction) Refund() (*TransactionResponse, error) {
 	new = TransactionRequest{
 		TransactionType: "refundTransaction",
 		Amount:          tranx.Amount,
+		Order:           tranx.Order,
 		RefTransId:      tranx.RefTransId,
 	}
 	response, err := SendTransactionRequest(new)
@@ -153,6 +158,7 @@ type NewTransaction struct {
 	CreditCard CreditCard `json:"payment,omitempty"`
 	AuthCode   string     `json:"authCode,omitempty"`
 	BillTo     *BillTo    `json:"omitempty"`
+	Order      *Order     `json:"omitempty"`
 }
 
 type PreviousTransaction struct {
@@ -215,6 +221,11 @@ type CreateTransactionRequest struct {
 
 type Payment struct {
 	CreditCard CreditCard `json:"creditCard,omitempty"`
+}
+
+type Order struct {
+	InvoiceNumber string `json:"invoiceNumber,omitempty"`
+	Description   string `json:"description,omitempty"`
 }
 
 type CreditCard struct {
@@ -286,6 +297,7 @@ type TransactionRequest struct {
 	RefTransId      string     `json:"refTransId,omitempty"`
 	AuthCode        string     `json:"authCode,omitempty"`
 	Profile         *Profile   `json:"profile,omitempty"`
+	Order           *Order     `json:"order,omitempty"`
 	LineItems       *LineItems `json:"lineItems,omitempty"`
 	//Tax                 Tax                 `json:"tax,omitempty"`
 	//Duty                Duty                `json:"duty,omitempty"`
