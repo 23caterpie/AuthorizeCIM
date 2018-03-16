@@ -32,6 +32,10 @@ func (r MessagesResponse) ErrorMessage() string {
 	return r.Messages.Message[0].Text
 }
 
+func (r MessagesResponse) ErrorCode() string {
+	return r.Messages.Message[0].Code
+}
+
 func (r TransactionResponse) Approved() bool {
 	if r.Response.ResponseCode == "1" || r.Response.ResponseCode == "4" {
 		return true
